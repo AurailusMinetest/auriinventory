@@ -44,10 +44,10 @@ function auriinventory.gen_formspec_main (player)
 					item_image[9.5,2.5;1,1;]] .. list[9]:get_name() .. [[]
 					]]
 
-					print("prev" .. player:get_attribute("recipepreview_item"))
 					if not player:get_attribute("recipepreview_item") then
 						player:set_attribute("recipepreview_item", "")
 					end
+					print("prev" .. player:get_attribute("recipepreview_item"))
 					if player:get_attribute("recipepreview_item") ~= "" then
 						fs = fs .. [[
 							image_button[9.40,0.05;0.5,0.5;auriinventory_small_icon_0.png;recipe_prev;;true;false;auriinventory_small_icon_1.png]
