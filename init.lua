@@ -108,6 +108,14 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			end
 		end
 
+		if fields.messages then
+			local datatable = minetest.explode_textlist_event(fields.messages)
+			if datatable.type == "CHG" then
+				player:set_inventory_formspec(auriinventory.gen_formspec_messaging(player, math.ceil(datatable.index / 2)))
+				return
+			end
+		end
+
 		if fields.skinlist then
 			local datatable = minetest.explode_textlist_event(fields.skinlist)
 			if datatable.type == "CHG" then

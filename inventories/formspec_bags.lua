@@ -4,7 +4,7 @@ function auriinventory.gen_formspec_bags (player)
 	end
 
 	local fs = [[
-		size[15,8;]
+		size[17,8;]
 		bgcolor[#222222ee;false]
 		listcolors[#ffffff33;#ffffff55;#888888;#33333399;#ffffff]
 	]]
