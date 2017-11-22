@@ -1,30 +1,62 @@
-local function spairs(t, order)
-  -- collect the keys
-  local keys = {}
-  for k in pairs(t) do keys[#keys+1] = k end
+--[[
+Ordered table iterator, allow to iterate on the natural order of the keys of a
+table.
 
-  -- if order function given, sort by it by passing the table and keys a, b,
-  -- otherwise just sort the keys 
-  if order then
-    table.sort(keys, function(a,b) return order(t, a, b) end)
-  else
-    table.sort(keys)
-  end
+Example:
+]]
 
-  -- return the iterator function
-  local i = 0
-  return function()
-    i = i + 1
-    if keys[i] then
-      return keys[i], t[keys[i]]
+local function __genOrderedIndex( t )
+    local orderedIndex = {}
+    for key in pairs(t) do
+        table.insert( orderedIndex, key )
     end
-  end
+    table.sort( orderedIndex )
+    return orderedIndex
 end
+
+local function orderedNext(t, state)
+    -- Equivalent of the next function, but returns the keys in the alphabetic
+    -- order. We use a temporary ordered key table that is stored in the
+    -- table being iterated.
+
+    local key = nil
+    --print("orderedNext: state = "..tostring(state) )
+    if state == nil then
+        -- the first time, generate the index
+        t.__orderedIndex = __genOrderedIndex( t )
+        key = t.__orderedIndex[1]
+    else
+        -- fetch the next value
+        for i = 1,table.getn(t.__orderedIndex) do
+            if t.__orderedIndex[i] == state then
+                key = t.__orderedIndex[i+1]
+            end
+        end
+    end
+
+    if key then
+        return key, t[key]
+    end
+
+    -- no more value to return, cleanup
+    t.__orderedIndex = nil
+    return
+end
+
+local function orderedPairs(t)
+    -- Equivalent of the pairs() function on tables. Allows to iterate
+    -- in order
+    return orderedNext, t, nil
+end
+
+--[[
+Register recipebook items
+iterate through all items and return an ordered list
+]]
 
 function auriinventory.load_recipebook_and_reload()
 	local titems = {}
-	--Get item list oboi
-	for key, val in pairs(minetest.registered_items) do
+	for key, val in orderedPairs(minetest.registered_items) do
 		if key and key ~= "" and key ~= nil then
 			if not val.groups.not_in_creative_inventory then
 	    	table.insert(titems, key)
@@ -32,39 +64,8 @@ function auriinventory.load_recipebook_and_reload()
 			end
   	end
 	end
-	
-	for x, y in spairs(titems, function(t, a, b) 
-		return string.byte(string.sub(t[b], string.find(t[b], ":", 1)+1, string.find(t[b], ":", 1)+1)) 
-		< string.byte(string.sub(t[a], string.find(t[a], ":", 1)+1, string.find(t[a], ":", 1)+1),1)
-	end) do
-		table.insert(auriinventory.items, y)
-	end
 
-	titems = auriinventory.items
-	auriinventory.items = {}
-
-	for x, y in spairs(titems, function(t, a, b)
-		local ind = 1
-		while true do
-			local sA = string.sub(t[a], 1, string.find(t[a], ":", 1) - 1)
-			local sB = string.sub(t[b], 1, string.find(t[b], ":", 1) - 1)
-
-			if not string.byte(sA, ind) then return true end
-			if not string.byte(sB, ind) then return false end
-
-			if ind >= math.max(string.len(sA),string.len(sB)) then return nil end
-
-			if string.byte(sB,ind) > string.byte(sA,ind) then
-				return true
-			elseif string.byte(sB,ind) < string.byte(sA,ind) then
-				return false
-			end
-
-			ind = ind + 1
-		end
-	end) do
-		table.insert(auriinventory.items, y)
-	end
+	auriinventory.items = titems;
 
 	print("Auriinventory Initialized with " .. auriinventory.itemcount .. " items.")
 
