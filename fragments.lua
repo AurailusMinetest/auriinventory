@@ -33,7 +33,8 @@ auriinventory.fragments["back"] = [[
 
 function auriinventory.gen_fragment_recipebook(player)
 	if not player:get_attribute("rbook_page") then player:set_attribute("rbook_page", 0) end
-	local cheat = player:get_attribute("cheatitems") or false
+	-- local cheat = player:get_attribute("cheatitems") or false
+	local cheat = true
 
 	local inv_size = 6*10
 	local page = tonumber(player:get_attribute("rbook_page"))
