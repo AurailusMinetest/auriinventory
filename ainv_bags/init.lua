@@ -1,28 +1,36 @@
+ainv_bags = {}
+
 --Load bag formspec
-local path = minetest.get_modpath("auriinventory")
-dofile(path .. "/inventories/formspec_bags.lua")
+local path = minetest.get_modpath("ainv_bags")
+dofile(path .. "/formspecs/formspec_bags.lua")
 
 --Create Bag Item
-minetest.register_craftitem("auriinventory:bag", {
-	description = "Bag",
+minetest.register_craftitem("ainv_bags:bag", {
+	description = "Item Bag",
 	groups = {bag = 1},
 	inventory_image = "auriinventory_bag_inventory.png",
 	stack_max = 1,
-	on_use = function(item, player, pointed_thing)
-		local bag = "uh oh"
-		if item:get_metadata() ~= "" then
-			bag = item:get_metadata()
-		else
-			bag = tostring(os.time()) .. tostring(math.random(1000))
-			item:set_metadata(bag)
-		end
-		minetest.chat_send_player(player:get_player_name(), "This bag is " .. bag)
-		return item
-	end
+	-- on_use = function(item, player, pointed_thing)
+	-- 	local bag = "uh oh"
+	-- 	if item:get_metadata() ~= "" then
+	-- 		bag = item:get_metadata()
+	-- 	else
+	-- 		bag = tostring(os.time()) .. tostring(math.random(1000))
+	-- 		item:set_metadata(bag)
+	-- 	end
+	-- 	minetest.chat_send_player(player:get_player_name(), "This bag is " .. bag)
+	-- 	return item
+	-- end
+})
+
+ainv.register_inventory_screen("bags", ainv_bags.gen_formspec_bags, {
+	name = "Bags",
+	image = "auriinventory_tab_icon_00.png",
+	image_hover = "auriinventory_tab_icon_01.png"
 })
 
 --Register Inventories
-function auriinventory.gen_bag_inventories(player)
+function ainv_bags.gen_bag_inventories(player)
 	local name = player:get_player_name()
 	local player_inv = player:get_inventory()
 
@@ -33,19 +41,19 @@ function auriinventory.gen_bag_inventories(player)
 	local bag_inv = minetest.create_detached_inventory(name .. "_bags", {
 		on_put = function(inv, listname, index, stack, player)
 			player:get_inventory():set_stack(listname, index, stack)
-			auriinventory.check_bags(player, index, stack)
+			ainv_bags.check_bags(player, index, stack)
 		end,
 		on_take = function(inv, listname, index, stack, player)
 			player:get_inventory():set_stack(listname, index, nil)
-			auriinventory.check_bags(player, index, stack)
+			ainv_bags.check_bags(player, index, stack)
 		end,
 		on_move = function(inv, from_list, from_index, to_list, to_index, count, player)
 			local plaver_inv = player:get_inventory()
 			local stack = inv:get_stack(to_list, to_index)
 			player_inv:set_stack(to_list, to_index, stack)
 			player_inv:set_stack(from_list, from_index, nil)
-			auriinventory.check_bags(player, to_index, stack)
-			auriinventory.check_bags(player, from_index, stack)
+			ainv_bags.check_bags(player, to_index, stack)
+			ainv_bags.check_bags(player, from_index, stack)
 		end,
 	})
 
@@ -60,8 +68,8 @@ function auriinventory.gen_bag_inventories(player)
 	return true
 end
 
-function auriinventory.check_bags(player, index, stack)
+function ainv_bags.check_bags(player, index, stack)
 	if index == 21 or index == 42 or index == 63 then
-		auriinventory.reloadInventory(player)
+		ainv.reloadInventory(player)
 	end
 end

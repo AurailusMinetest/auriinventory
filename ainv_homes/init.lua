@@ -19,15 +19,14 @@ ainv.register_callback("homes", function (player, fields)
 				player:set_attribute("home_editing", i)
 				minetest.show_formspec(player:get_player_name(), "addhome", ainv_homes.gen_formspec_addhome(player, tostring(i)))
 			else
-				player:setpos(minetest.deserialize(player:get_attribute("home_" .. i .. "_pos")))
+				player:set_pos(minetest.deserialize(player:get_attribute("home_" .. i .. "_pos")))
 			end
-			print(i)
-			return
+			return false
 		elseif fields["delhome" .. tostring(i)] ~= nil then
 			player:set_attribute("home_" .. i .. "_pos", nil)
 			player:set_attribute("home_" .. i .. "_name", nil)
 			ainv.reloadInventory(player)
-			return
+			return false
 		end
 	end
 end)

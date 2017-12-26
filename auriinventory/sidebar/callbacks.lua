@@ -50,6 +50,15 @@ end)
 
 --Pagination--
 ainv.register_callback("*", function(player, fields)
+	if fields.togglecheat or fields.togglecheat_label then
+		ainv.playerdata[player:get_player_name()].cheating = not ainv.playerdata[player:get_player_name()].cheating
+		ainv.reloadInventory(player)
+		return false
+	end
+end)
+
+--Pagination--
+ainv.register_callback("*", function(player, fields)
 	if fields.sidebar_nextpage then
 
 		local data = ainv.playerdata[player:get_player_name()]["sidebar_page"]

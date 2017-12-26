@@ -2,10 +2,13 @@ ainv = {}
 
 ainv.screens = {}
 function ainv.register_inventory_screen(name, gen_func, tab)
-	ainv.screens[name] = {
+	table.insert(ainv.screens, {
+		name = name,
 		gen = gen_func,
 		tab = tab
-	}
+	})
+
+	print(dump(ainv.screens))
 
 	if tab then
 		ainv.register_callback("*", function(player, fields)
@@ -30,9 +33,10 @@ end
 
 local path = minetest.get_modpath("auriinventory")
 
-dofile(path .. "/trash.lua")
 dofile(path .. "/fragments.lua")
-dofile(path .. "/inventories/formspec_main.lua")
+dofile(path .. "/trash.lua")
+dofile(path .. "/tabs.lua")
+dofile(path .. "/formspecs/formspec_main.lua")
 dofile(path .. "/sidebar/init.lua")
 
 ainv.register_inventory_screen("main", ainv.gen_formspec_main, {
@@ -40,9 +44,6 @@ ainv.register_inventory_screen("main", ainv.gen_formspec_main, {
 	image = "auriinventory_tab_icon_04.png",
 	image_hover = "auriinventory_tab_icon_05.png"
 })
-
--- dofile(path .. "/bags.lua")
--- dofile(path .. "/messaging.lua")
 
 ainv.armor = minetest.get_modpath("3d_armor") ~= nil
 
@@ -71,6 +72,14 @@ minetest.register_on_joinplayer(function (player)
 	ainv.loadInventory(player)
 end)
 
+function ainv.gen_formspec (screen, player)
+	for k,v in pairs(ainv.screens) do
+		if v.name == screen then
+			return v.gen(player)
+		end
+	end
+end
+
 function ainv.loadInventory (player)
 	local name = player:get_player_name();
 
@@ -89,14 +98,16 @@ function ainv.loadInventory (player)
 		end
 	end
 
-	player:set_inventory_formspec(ainv.screens['main'].gen(player))
+	player:set_inventory_formspec(ainv.gen_formspec('main', player))
+	-- player:set_inventory_formspec(ainv.screens['main'].gen(player))
 end
 
 function ainv.reloadInventory(player)
 	if player:is_player() and ainv.playerdata[player:get_player_name()] then
 		local tab = ainv.playerdata[player:get_player_name()].inventory_tab
 
-		player:set_inventory_formspec(ainv.screens[tab].gen(player))
+		player:set_inventory_formspec(ainv.gen_formspec(tab, player))
+		-- player:set_inventory_formspec(ainv.screens[tab].gen(player))
 	end
 end
 
@@ -105,7 +116,7 @@ function ainv.formspec_base(player)
 		size[22,8;]
 		bgcolor[#0000;false]
 		listcolors[#cccccc55;#ffffff55;#888888;#33333399;#ffffff]
-		container[3,0]
+		container[4,0]
 		box[-0.25,-0.25;12,8.7;#222222]
 		box[-0.25,-0.25;12,8.7;#222222]
 		box[-0.25,-0.25;12,8.7;#222222]
@@ -133,25 +144,10 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			end
 		end
 
-		-- if fields.bags then
-		-- 	player:set_inventory_formspec(ainv.gen_formspec_bags(player))
-		-- 	player:set_attribute("screen", "bags")
-		-- 	return
-
 		-- if fields.messages then
 		-- 	local datatable = minetest.explode_textlist_event(fields.messages)
 		-- 	if datatable.type == "CHG" then
 		-- 		player:set_inventory_formspec(ainv.gen_formspec_messaging(player, math.ceil(datatable.index / 2)))
-		-- 		return
-		-- 	end
-		-- end
-
-		-- if fields.skinlist then
-		-- 	local datatable = minetest.explode_textlist_event(fields.skinlist)
-		-- 	if datatable.type == "CHG" then
-		-- 		auriskins.playerskins[player:get_player_name()] = datatable.index
-		-- 		auriskins.update_skin(player)
-		-- 		ainv.reloadInventory(player)
 		-- 		return
 		-- 	end
 		-- end

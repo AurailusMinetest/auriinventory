@@ -8,19 +8,26 @@ local xorigin = -0.5
 function ainv.create_sidebar_menu(player, searchbar)
 	if not ainv.items_loaded then return "" end
 
-	local data = ainv.playerdata[player:get_player_name()]
-
-	--Get current page
-	if not data["sidebar_page"] then data["sidebar_page"] = 0 end
-	local page = tonumber(data["sidebar_page"])
-
 	--Item Iterator
+	local page = ainv.playerdata[player:get_player_name()].sidebar_page
 	local index = page * ainv.sidebar_inv_size + 1
+
+	--Cheat mode button
+	local cheat_button = 
+	"image_button[-0.5,-2.46;0.5,0.5;auriinventory_small_icon_06.png;togglecheat;;true;false;auriinventory_small_icon_07.png]" .. --Cheat button
+	"image_button[-0.2,-2.42;1.6,0.5;auriinventory_blank.png;togglecheat_label;Recipe Mode;true;false;auriinventory_blank.png]"   --Cheat button label
+	
+	if ainv.playerdata[player:get_player_name()].cheating then
+		cheat_button =
+		"image_button[-0.5,-2.46;0.5,0.5;auriinventory_small_icon_08.png;togglecheat;;true;false;auriinventory_small_icon_09.png]" .. --Cheat button
+		"image_button[-0.2,-2.42;1.6,0.5;auriinventory_blank.png;togglecheat_label;Cheat Mode;true;false;auriinventory_blank.png]"    --Cheat button label
+	end
 
 	local fs = 
 	"container[18,0]" .. 						    --Container
 	"box[-0.95,-2.6;6,13.3;#000000]"..  --Background
-	"image_button[0.4,-2.45;2.5,0.6;auriinventory_blank.png;togglesearch;Toggle Search;true;true;auriinventory_blank.png]" --Search button
+	cheat_button ..
+	"image_button[1.75,-2.48;2.5,0.6;auriinventory_blank.png;togglesearch;Toggle Search;true;true;auriinventory_blank.png]" --Search button
 
 	--Create buttons
 	for j = 0, ainv.sidebar_height - 1 do
