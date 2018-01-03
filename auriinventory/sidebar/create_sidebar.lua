@@ -25,7 +25,7 @@ function ainv.create_sidebar_menu(player, searchbar)
 
 	local fs = 
 	"container[18,0]" .. 						    --Container
-	"box[-0.95,-2.6;6,13.3;#000000]"..  --Background
+	"box[-0.95,-2.6;6,13.3;#0001]"..  	--Background
 	cheat_button ..
 	"image_button[1.75,-2.48;2.5,0.6;auriinventory_blank.png;togglesearch;Toggle Search;true;true;auriinventory_blank.png]" --Search button
 

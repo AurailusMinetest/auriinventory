@@ -1,5 +1,10 @@
 ainv.fragments = {}
 
+local path = minetest.get_modpath("auriinventory") .. "/fragments"
+
+dofile(path .. "/trash.lua")
+dofile(path .. "/tabs.lua")
+
 function ainv.append_fragment(string, fragment)
 	string = string .. ainv.fragments[fragment]
 	return string

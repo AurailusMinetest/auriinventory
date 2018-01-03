@@ -8,8 +8,6 @@ function ainv.register_inventory_screen(name, gen_func, tab)
 		tab = tab
 	})
 
-	print(dump(ainv.screens))
-
 	if tab then
 		ainv.register_callback("*", function(player, fields)
 			for field, val in pairs(fields) do
@@ -33,9 +31,7 @@ end
 
 local path = minetest.get_modpath("auriinventory")
 
-dofile(path .. "/fragments.lua")
-dofile(path .. "/trash.lua")
-dofile(path .. "/tabs.lua")
+dofile(path .. "/fragments/init.lua")
 dofile(path .. "/formspecs/formspec_main.lua")
 dofile(path .. "/sidebar/init.lua")
 
@@ -55,6 +51,7 @@ if ainv.armor then
 	end)
 end
 
+--Run after all mods are loaded
 minetest.after(0.001, function()
 	ainv.load_recipebook_and_reload()
 end)
@@ -63,10 +60,15 @@ minetest.register_on_joinplayer(function (player)
 	ainv.playerdata[player:get_player_name()] = {
 		sidebar_page = 0, 				--Current page in sidebar
 		inventory_tab = 'main',		--Current inventory screen
+
+		cheating = 1,							--Whether to spawn in items or recipe them
+		
 		lastspawntime = nil, 			--When last spawned item was, for D-Click
 		lastspawn = 0, 						--Last spawned item, for D-Click
 		filledstack = false,			--Determine if needed to fill existing stack on D-Click
-		cheating = 1 							--Whether to spawn in items or recipe them
+
+		recipe_item = -1,					--Item to show recipe for, -1 = nothing
+		recipe_index = 1,					--Current recipe to show (in case of multiple)
 	}
 
 	ainv.loadInventory(player)
@@ -83,12 +85,8 @@ end
 function ainv.loadInventory (player)
 	local name = player:get_player_name();
 
-	player:get_inventory():set_width("craft", 3)
-	player:get_inventory():set_size("craft", 9)
-	player:get_inventory():set_size("main", 8*4)
-
-	-- player:get_inventory():set_list("recipepreview", {})
-	-- player:get_inventory():set_size("recipepreview", 10)
+	player:get_inventory():set_list("recipepreview", {})
+	player:get_inventory():set_size("recipepreview", 10)
 
 	if ainv.armor then
 		if armor.def[name].init_time == 0 then
@@ -114,9 +112,12 @@ end
 function ainv.formspec_base(player)
 	local fs = [[
 		size[22,8;]
-		bgcolor[#0000;false]
+		bgcolor[#0005;true]
 		listcolors[#cccccc55;#ffffff55;#888888;#33333399;#ffffff]
 		container[4,0]
+		box[-0.25,-0.25;12,8.7;#222222]
+		box[-0.25,-0.25;12,8.7;#222222]
+		box[-0.25,-0.25;12,8.7;#222222]
 		box[-0.25,-0.25;12,8.7;#222222]
 		box[-0.25,-0.25;12,8.7;#222222]
 		box[-0.25,-0.25;12,8.7;#222222]

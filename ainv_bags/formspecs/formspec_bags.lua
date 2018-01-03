@@ -5,9 +5,12 @@ function ainv_bags.gen_formspec_bags (player)
 
 	local fs = [[
 		size[22,8;]
-		bgcolor[#0000;false]
+		bgcolor[#0005;true]
 		listcolors[#cccccc55;#ffffff55;#888888;#33333399;#ffffff]
 		container[2,0]
+		box[-0.25,-0.25;14.3,8.7;#222222]
+		box[-0.25,-0.25;14.3,8.7;#222222]
+		box[-0.25,-0.25;14.3,8.7;#222222]
 		box[-0.25,-0.25;14.3,8.7;#222222]
 		box[-0.25,-0.25;14.3,8.7;#222222]
 		box[-0.25,-0.25;14.3,8.7;#222222]

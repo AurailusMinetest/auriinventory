@@ -9,10 +9,11 @@ ainv.register_callback("*", function(player, fields)
 
 			if ainv.playerdata[name].cheating then
 				if minetest.check_player_privs(player, "give") then
+
+					--Determine how many items to give player
 					local stack = 1;
 
 					if not ainv.playerdata[name].lastspawntime then
-
 						ainv.playerdata[name].lastspawntime = minetest.get_us_time()/1000000.0;
 
 					elseif ainv.playerdata[name].lastspawntime + 0.3 > minetest.get_us_time()/1000000.0 then
@@ -27,9 +28,8 @@ ainv.register_callback("*", function(player, fields)
 						end
 					end
 
-					if minetest.check_player_privs(player, "give") then
-						player:get_inventory():add_item("main", ainv.items[ind] .. " " .. stack)
-					end
+					--Add items to inventory
+					player:get_inventory():add_item("main", ainv.items[ind] .. " " .. stack)
 
 					if stack == 1 then
 						ainv.playerdata[name].filledstack = false
@@ -37,11 +37,12 @@ ainv.register_callback("*", function(player, fields)
 					ainv.playerdata[name].lastspawn = ind
 					ainv.playerdata[name].lastspawntime = minetest.get_us_time()/1000000.0;
 				end
-			else
-				print('recipe!')
-				-- player:set_attribute("recipepreview_index", 1)
-				-- ainv.show_recipe_preview(player, ainv.items[ind])
-				-- ainv.reloadInventory(player)
+			else --Recipe mode
+				ainv.playerdata[name].recipe_item = ind
+				ainv.playerdata[name].recipe_index = 1
+
+				ainv.show_recipe_preview(player)
+				ainv.reloadInventory(player)
 			end
 			return false
 		end
