@@ -48,7 +48,7 @@ minetest.register_chatcommand("setmaxhomes", {
 	privs = {server},
 	func = function (name, param)
 		if tonumber(param) then
-			minetest.setting_set("maxhomes", tonumber(param))
+			minetest.settings:set("maxhomes", tonumber(param))
 		else
 			minetest.chat_send_player(name, "Please supply a number.")
 		end
