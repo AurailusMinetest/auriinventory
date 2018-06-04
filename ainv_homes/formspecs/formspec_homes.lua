@@ -10,7 +10,7 @@ function ainv_homes.gen_formspec_homes (player)
 	]]
 
 	--List Homes
-	local max = tonumber(minetest.setting:get("maxhomes")) or 6
+	local max = tonumber(minetest.settings:get("maxhomes")) or 6
 	if minetest.check_player_privs(player:get_player_name(), "max_homes") then
 		max = 6
 	end
