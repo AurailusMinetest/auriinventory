@@ -10,7 +10,7 @@ function ainv_homes.gen_formspec_homes (player)
 	]]
 
 	--List Homes
-	local max = tonumber(minetest.setting_get("maxhomes")) or 6
+	local max = tonumber(minetest.settings:get("maxhomes")) or 6
 	if minetest.check_player_privs(player:get_player_name(), "max_homes") then
 		max = 6
 	end
@@ -37,8 +37,8 @@ function ainv_homes.gen_formspec_homes (player)
 	end
 
 	--Temp and Death Point buttons
-	if minetest.setting_getbool("temphome") then fs = fs .. "button[9,0.325;2.05,1;temphome;Set Temp Home]" end
-	if minetest.setting_getbool("deathpoint") then fs = fs .. "button[9,1.225;2.05,1;deathpoint;Return to Death Point]" end
+	if minetest.settings:get_bool("temphome") then fs = fs .. "button[9,0.325;2.05,1;temphome;Set Temp Home]" end
+	if minetest.settings:get_bool("deathpoint") then fs = fs .. "button[9,1.225;2.05,1;deathpoint;Return to Death Point]" end
 	if minetest.check_player_privs(player:get_player_name(), "teleport") then fs = fs .. "button[9,2.125;2.05,1;teleportto;Teleport to Player]" end
 
 	fs = fs .. ainv.formspec_base_end(player)
