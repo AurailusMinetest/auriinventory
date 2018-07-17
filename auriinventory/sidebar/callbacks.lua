@@ -38,8 +38,8 @@ ainv.register_callback("*", function(player, fields)
 					ainv.playerdata[name].lastspawntime = minetest.get_us_time()/1000000.0;
 				end
 			else --Recipe mode
-				ainv.playerdata[name].recipe_item = ind
-				ainv.playerdata[name].recipe_index = 1
+				ainv.playerdata[name].recipe_index = ind
+				ainv.playerdata[name].recipe_items = {}
 
 				ainv.show_recipe_preview(player)
 				ainv.reloadInventory(player)
@@ -88,5 +88,38 @@ ainv.register_callback("*", function(player, fields)
 		ainv.reloadInventory(player)
 		return false
 
+	end
+end)
+
+--Recipe Previews--
+ainv.register_callback("*", function(player, fields)
+	if fields.recipepreview_next then
+		local recipe_page = ainv.playerdata[player:get_player_name()]["recipe_page"] or 1
+		local recipe_amount = #ainv.playerdata[player:get_player_name()].recipe_items or 1
+		
+		if recipe_page < recipe_amount then
+			ainv.playerdata[player:get_player_name()]["recipe_page"] = recipe_page + 1
+		end
+
+		ainv.reloadInventory(player)
+
+		return false
+	elseif fields.recipepreview_prev then
+		local recipe_page = ainv.playerdata[player:get_player_name()]["recipe_page"] or 1
+
+		if recipe_page > 1 then
+			ainv.playerdata[player:get_player_name()]["recipe_page"] = recipe_page - 1
+		end
+
+		ainv.reloadInventory(player)
+
+		return false
+	end
+end)
+
+--Quick Craft--
+ainv.register_callback("*", function(player, fields)
+	if fields.quickcraft then
+		
 	end
 end)
