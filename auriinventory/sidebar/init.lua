@@ -59,5 +59,5 @@ end
 
 local path = minetest.get_modpath("auriinventory") .. "/sidebar"
 dofile(path .. "/create_sidebar.lua")
--- dofile(path .. "/recipe_preview.lua")
+dofile(path .. "/recipe_preview.lua")
 dofile(path .. "/callbacks.lua")
